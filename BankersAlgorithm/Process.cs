@@ -4,7 +4,6 @@ public class Process
 {
     public int Number { get; set; }
     public int ResourceCount { get; set; }
-    public bool IsFinished { get; set; }
     public decimal[] Allocation { get; set; }
     public decimal[] Maximum { get; set; }
     public decimal[] Needs
@@ -12,7 +11,9 @@ public class Process
         get => new int[ResourceCount]
         .Select((n, i) => Maximum[i] - Allocation[i])
         .ToArray();
+        set { }
     }
+
 
     public Process(int number, int resourceCount, int randomMax = 10)
     {
@@ -34,6 +35,7 @@ public class Process
         Number = number;
         Allocation = allocation;
         Maximum = maximum;
+        ResourceCount = allocation.Length;
     }
 
     public override string ToString()
