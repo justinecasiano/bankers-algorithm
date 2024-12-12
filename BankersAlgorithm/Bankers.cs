@@ -16,11 +16,6 @@ public class Bankers
 
     public void ResourceRequest(int processNumber, decimal[] request)
     {
-        // @Mark Rodney Tan
-        // Check here if the request is valid
-        // then do the necessary computations
-        // search for the formulas in the web
-        // add the code in here before SafeStateCheck()
         Console.WriteLine($"\nP{processNumber} is requesting: {PrintResources(request)}");
 
         bool isLessThanNeeds = Processes[processNumber].Needs.Zip(request, (n, r) => r <= n).All(b => b);
@@ -44,7 +39,7 @@ public class Bankers
         var originalAllocation = Processes[processNumber].Allocation;
 
         Processes[processNumber].Allocation = Processes[processNumber].Allocation.Select((n, i) => n + request[i]).ToArray();
-        Processes[processNumber].Needs = Processes[processNumber].Needs.Select((n, i) => n + request[i]).ToArray();
+        Processes[processNumber].Needs = Processes[processNumber].Needs.Select((n, i) => n - request[i]).ToArray();
         Available = [originalAvailable[0].Select((n, i) => n - request[i]).ToArray()];
 
         Console.WriteLine($"\nAvailable = {PrintResources(originalAvailable[0])} - " +
@@ -64,16 +59,6 @@ public class Bankers
 
         if (!IsSafe)
         {
-            // @Mark Rodney Tan
-            // Revert the original values for needs, allocation, and available
-            // of the requesting process
-            // use the List<Process> processes, List<decimal[]> available, 
-            // and List<string> safeSequence fields to update the values
-            // the allocation, needs and maximum is in the Process class
-            // add the code in here, before PrintMatrix()
-            // once done, commit it and create a pull request to my repo
-            // github.com/justinecasiano/bankers-algorithm
-
             Console.WriteLine("New Available = Available + Request");
             Console.WriteLine($"Available = {PrintResources(Available[0])} + " +
                 $"{PrintResources(request)} = {PrintResources(originalAvailable[0])}");
@@ -103,16 +88,6 @@ public class Bankers
         Console.WriteLine("\nBefore Safe State Check:");
         PrintMatrix();
 
-        // @John Cleford Ricafranca
-        // Check here if the needs of the processes can be satisfied
-        // with the current work available, and update the
-        // safe sequence, available resources, and isSafe 
-        // use the List<Process> processes, List<decimal[]> available, 
-        // and List<string> safeSequence, isSafe fields to update the values
-        // the allocation, needs and maximum is in the Process class
-        // add the code in here, before the After Safe State Check
-        // once done, commit it and create a pull request to my repo
-        // github.com/justinecasiano/bankers-algorithm
         int i = 0;
         bool hasNewAvailable = false;
         List<Process> unfinished = Processes.Select(p => new Process(p.Number, p.Allocation, p.Maximum)).ToList();
@@ -171,16 +146,10 @@ public class Bankers
         while (!"YES,NO".Split(",").Contains(selection = Console.ReadLine().ToUpper()));
         bool shouldRandomize = selection == "YES";
 
-        // Initialize the values needed for the Banker's Algorithm
-        // either by user input or random generation of values
         GenerateProcesses(numberOfProcesses, numberOfResourceTypes, shouldRandomize);
 
-        // Now check if the system is in a safe state
         SafeStateCheck();
 
-        // Ask user if they want to request resource for the current state if 
-        // the system is in a safe state, do another safe state check
-        // or else exit the program
         string options = $"{(IsSafe ? "Resource Request [R]\n" : "")}Do another Safe State Check [S]\nExit [E]";
         string choice = "";
 
